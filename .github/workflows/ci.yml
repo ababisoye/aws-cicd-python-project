@@ -47,6 +47,6 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           aws lambda update-function-code \
-            --function-name rental-cost-calculator \
+            --function-name rental-cost-function \
             --zip-file fileb://function.zip
 
