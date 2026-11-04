@@ -1,11 +1,17 @@
-name: Python CI
+
+name: Python CI and Lambda Deployment
 
 on:
   push:
+    branches:
+      - main
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
-  test:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,3 +30,23 @@ jobs:
 
       - name: Run tests
         run: python -m pytest -v
+
+      - name: Configure AWS credentials
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-north-1
+
+      - name: Package Lambda application
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: zip function.zip app.py lambda_function.py
+
+      - name: Deploy to AWS Lambda
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          aws lambda update-function-code \
+            --function-name rental-cost-calculator \
+            --zip-file fileb://function.zip
+
