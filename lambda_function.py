@@ -12,6 +12,7 @@ def lambda_handler(event, context):
     return {
         "statusCode": 200,
         "body": json.dumps({
-            "total": total
+            "message": "Rental cost calculated successfully",
+            "total":total
         })
     }
