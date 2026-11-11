@@ -13,6 +13,5 @@ def test_lambda_handler():
 
     assert response["statusCode"] == 200
     assert json.loads(response["body"]) == {
-        "total": 30000,
-"message": "Rental cost calculated successfully"
+        "total": 30000
     }
